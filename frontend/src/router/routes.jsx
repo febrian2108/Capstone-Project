@@ -3,6 +3,10 @@ import { createBrowserRouter } from "react-router-dom";
 import LoginPages from "../pages/LoginPages";
 import HomePages from "../pages/HomePages";
 import RegisterPages from "../pages/RegisterPages";
+import QuestionPages from "../pages/QuestionPages";
+import ProfilePages from "../pages/ProfilePages";
+import AboutApps from "../pages/AboutAppsPages";
+import OutputPages from "../pages/OutputPages";
 
 const router = createBrowserRouter([
     { 
@@ -16,7 +20,23 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: React.createElement(LoginPages)
-    }
+    },
+    {
+        path: '/about',
+        element: React.createElement(AboutApps)
+    },
+    {
+        path: '/question',
+        element: React.createElement(QuestionPages)
+    },
+    {
+        path: '/profile',
+        element: React.createElement(ProfilePages)
+    },
+    {
+        path: '/output',
+        element: React.createElement(OutputPages)
+    },
 ])
 
 export default router;
