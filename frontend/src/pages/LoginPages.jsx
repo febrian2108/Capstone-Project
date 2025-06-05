@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPages() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -15,21 +18,41 @@ export default function LoginPages() {
         setSuccess("");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Simulasi login sederhana
         if (formData.email === "" || formData.password === "") {
             setError("Email dan password wajib diisi.");
             return;
         }
 
-        // Simulasi login sukses
-        setSuccess("Login berhasil!");
-        setFormData({
-            email: "",
-            password: "",
-        });
+        try {
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Terjadi kesalahan.");
+            } else {
+                setSuccess(data.message);
+                localStorage.setItem("token", data.token);
+                setFormData({
+                    email: "",
+                    password: "",
+                });
+
+                navigate("/genres");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            setError("Gagal terhubung ke server.");
+        }
     };
 
     return (
@@ -43,12 +66,9 @@ export default function LoginPages() {
 
                 <div className="bg-black bg-opacity-85 p-5 flex rounded-2xl shadow-lg max-w-3xl z-10">
                     <div className="md:w-1/2 px-5">
-                        <h2 className="text-2xl font-bold text-[#db0000] pt-3 pb-3">Login</h2>
+                        <h2 className="text-2xl font-bold text-white pt-3 pb-3">Login</h2>
                         <form className="mt-6" onSubmit={handleSubmit}>
                             <div>
-                                <label htmlFor="email" className="block text-white">
-                                    Email Address
-                                </label>
                                 <input
                                     type="email"
                                     name="email"
@@ -64,9 +84,6 @@ export default function LoginPages() {
                             </div>
 
                             <div className="mt-4">
-                                <label htmlFor="password" className="block text-white">
-                                    Password
-                                </label>
                                 <input
                                     type="password"
                                     name="password"
