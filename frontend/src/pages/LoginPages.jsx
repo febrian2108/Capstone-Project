@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPages() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -15,21 +18,41 @@ export default function LoginPages() {
         setSuccess("");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Simulasi login sederhana
         if (formData.email === "" || formData.password === "") {
             setError("Email dan password wajib diisi.");
             return;
         }
 
-        // Simulasi login sukses
-        setSuccess("Login berhasil!");
-        setFormData({
-            email: "",
-            password: "",
-        });
+        try {
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setError(data.error || "Terjadi kesalahan.");
+            } else {
+                setSuccess(data.message);
+                localStorage.setItem("token", data.token);
+                setFormData({
+                    email: "",
+                    password: "",
+                });
+
+                navigate("/genres");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            setError("Gagal terhubung ke server.");
+        }
     };
 
     return (
