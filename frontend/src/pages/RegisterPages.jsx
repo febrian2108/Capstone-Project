@@ -86,7 +86,7 @@ export default function RegisterPages() {
                                     placeholder="Enter Your Username"
                                     value={formData.username}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg bg-white mt-2 border focus:border-blue-500 focus:bg-green-50 focus:outline-none"
+                                    className="w-full px-4 py-3 rounded-lg bg-white mt-2 border focus:border-red-500 focus:bg-green-50 focus:outline-none"
                                     required
                                 />
                             </div>
@@ -99,7 +99,7 @@ export default function RegisterPages() {
                                     placeholder="Enter Email Address"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
                                     required
                                 />
                             </div>
@@ -113,12 +113,12 @@ export default function RegisterPages() {
                                     minLength={6}
                                     value={formData.password}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
                                     required
                                 />
                             </div>
 
-                            <div className="mt-2">
+                            <div className="mt-3">
                                 <input
                                     type="password"
                                     name="confirmPassword"
@@ -127,7 +127,7 @@ export default function RegisterPages() {
                                     minLength={6}
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
                                     required
                                 />
                             </div>
