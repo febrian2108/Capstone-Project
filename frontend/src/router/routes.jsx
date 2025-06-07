@@ -5,7 +5,7 @@ import HomePages from "../pages/HomePages";
 import RegisterPages from "../pages/RegisterPages";
 import QuestionPages from "../pages/QuestionPages";
 import ProfilePages from "../pages/ProfilePages";
-import AboutApps from "../pages/AboutAppsPages";
+import AboutApps from "../pages/AboutApps";
 import OutputPages from "../pages/OutputPages";
 import PasswordPages from "../pages/PasswordPages";
 
