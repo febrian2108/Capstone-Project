@@ -7,6 +7,7 @@ import QuestionPages from "../pages/QuestionPages";
 import ProfilePages from "../pages/ProfilePages";
 import AboutApps from "../pages/AboutAppsPages";
 import OutputPages from "../pages/OutputPages";
+import PasswordPages from "../pages/PasswordPages";
 
 const router = createBrowserRouter([
     { 
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     {
         path: '/profile',
         element: React.createElement(ProfilePages)
+    },
+    {
+        path: '/password',
+        element: React.createElement(PasswordPages)
     },
     {
         path: '/output',
