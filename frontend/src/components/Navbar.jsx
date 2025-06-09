@@ -15,7 +15,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="flex justify-between items-center p-6 bg-gray-950">
+        <nav className="flex justify-between items-center p-6 bg-gray-950 fixed top-0 left-0 right-0 z-50">
             <a href="#" className="w-40">
                 <img
                     src="./src/assets/logo-recmovies.png"
