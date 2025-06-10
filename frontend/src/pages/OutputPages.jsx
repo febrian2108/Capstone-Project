@@ -1,95 +1,94 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Link } from 'react-router-dom';
-import 'font-awesome/css/font-awesome.min.css';
 
-const moviesData = [
-    {
-        title: 'Film 1',
-        genre: 'Action',
-        poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
-        synopsis: 'This is a synopsis of Film 1.',
-    },
-    {
-        title: 'Film 2',
-        genre: 'Drama',
-        poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
-        synopsis: 'This is a synopsis of Film 2.',
-    },
-    {
-        title: 'Film 3',
-        genre: 'Comedy',
-        poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
-        synopsis: 'This is a synopsis of Film 3.',
-    },
-    {
-        title: 'Film 4',
-        genre: 'Horror',
-        poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
-        synopsis: 'This is a synopsis of Film 4.',
-    },
-    {
-        title: 'Film 5',
-        genre: 'Sci-Fi',
-        poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
-        synopsis: 'This is a synopsis of Film 5.',
-    },
-];
+export default function OutputPages() {
+  const { state } = useLocation();
+  const answers = state?.answers || {};
 
-function OutputPages() {
-    const [movies, setMovies] = useState(moviesData);
+  const [recs, setRecs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const refreshMovies = () => {
-        // Untuk demonstrasi, hanya mengacak urutan film
-        setMovies([...movies].sort(() => Math.random() - 0.5));
+  useEffect(() => {
+    const fetchRecs = async () => {
+      try {
+        const payload = {
+          watched: answers[3] || [],
+          genres: answers[1] || [],
+          contentTypes: answers[2] || [],
+        };
+
+        const { data } = await axios.post(
+          'http://localhost:9000/recommend',
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
+
+        const formatted = data.recommendations.map(r => ({
+          title: r.title,
+          note: `Similarity ${(r.similarity * 100).toFixed(0)}%`,
+          poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
+        }));
+
+        setRecs(formatted);
+      } catch (err) {
+        console.error('Gagal fetch rekomendasi:', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return (
-        <main className="relative h-screen flex flex-col text-white">
-            <Navbar />
-            <div className="fixed inset-0 -z-10">
-                <img
-                    src="./src/assets/background-netflix.jpg"
-                    alt="background-netflix"
-                    className="w-full h-full object-cover"
-                />
-            </div>
-            <div className="max-w-screen-2xl mx-auto p-4 mt-5 mb-40">
-                <header className="flex justify-between items-center mb-6">
-                    <h1 className="text-3xl font-bold">Movies Recommendation System</h1>
-                </header>
+    fetchRecs();
+  }, [answers]);
 
-                <div className="space-y-4">
-                    {movies.map((movie, index) => (
-                        <div key={index} className="flex items-center space-x-4 bg-gray-100 p-4 rounded-lg shadow-md">
-                            <img src={movie.poster} alt={movie.title} className="w-32 h-48 object-cover rounded-md" />
-                            <div className="flex-1">
-                                <h3 className="text-xl font-semibold text-black">{movie.title}</h3>
-                                <p className="text-black">{movie.genre}</p>
-                                <p className="mt-2 text-black">{movie.synopsis}</p>
-                            </div>
-                        </div>
-                    ))}
+  if (loading) {
+    return <div className="text-white text-center mt-20">Memuat rekomendasi…</div>;
+  }
+
+  return (
+    <main className="relative min-h-screen flex flex-col text-white">
+      <Navbar />
+      <div className="fixed inset-0 -z-10">
+        <img src="/src/assets/background-netflix.jpg" alt="" className="w-full h-full object-cover" />
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 py-8 mb-32">
+        <h1 className="text-3xl font-bold mb-6">Rekomendasi Film untukmu</h1>
+
+        {recs.length === 0 ? (
+          <p>Tidak ada rekomendasi yang cocok.</p>
+        ) : (
+          <div className="space-y-4">
+            {recs.map((movie, i) => (
+              <div key={i} className="flex items-center bg-gray-100 rounded p-4">
+                <img src={movie.poster} alt={movie.title} className="w-24 h-36 object-cover rounded" />
+                <div className="ml-4 text-black">
+                  <h3 className="font-semibold text-lg">{movie.title}</h3>
+                  <p className="text-sm">{movie.note}</p>
                 </div>
-                <div className="flex justify-start mt-6 gap-96 mb-5 pb-16">
-                    <Link
-                        to="/#"
-                        className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-300 flex items-center gap-2 mr-2"
-                    >
-                        Back Home
-                    </Link>
-                    <button
-                        onClick={refreshMovies}
-                        className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-500 flex items-start gap-2 mr-2"
-                    >
-                        Refresh
-                    </button>
-                </div>
-            </div>
-            <Footer />
-        </main>
-    );
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 flex gap-4">
+          <Link to="/" className="bg-gray-500 px-4 py-2 rounded">Back Home</Link>
+          <button onClick={() => window.location.reload()} className="bg-blue-700 px-4 py-2 rounded">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <Footer />
+    </main>
+  );
 }
 
-export default OutputPages;

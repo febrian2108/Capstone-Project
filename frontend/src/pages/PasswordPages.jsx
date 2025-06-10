@@ -5,11 +5,48 @@ import Footer from '../components/Footer';
 const PasswordPages = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Password changed:', { currentPassword, newPassword, confirmPassword });
+
+        if (newPassword !== confirmNewPassword) {
+            setErrorMessage('New password and confirmation do not match');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:9000/profile/change-password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword,
+                    confirmNewPassword: confirmNewPassword,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to change password');
+            }
+
+            setSuccessMessage(data.message || 'Password changed successfully!');
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+            setErrorMessage('');
+        } catch (error) {
+            setErrorMessage(error.message);
+            setSuccessMessage('');
+        }
     };
 
     return (
@@ -34,14 +71,19 @@ const PasswordPages = () => {
 
                     <h2 className="text-2xl font-semibold mb-6">Change Password</h2>
 
-                    <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
+                    {errorMessage && <p className="text-red-600 mb-4">{errorMessage}</p>}
+
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Input fields */}
                         <div>
                             <label className="block text-gray-700">Current Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 className="mt-1 p-2 w-full border border-gray-300 rounded"
                                 placeholder="current password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
                             />
                         </div>
 
@@ -51,18 +93,22 @@ const PasswordPages = () => {
                         <div>
                             <label className="block text-gray-700">New Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 className="mt-1 p-2 w-full border border-gray-300 rounded"
                                 placeholder="new password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
                             />
                         </div>
 
                         <div>
                             <label className="block text-gray-700">Confirm New Password</label>
                             <input
-                                type="text"
+                                type="password"
                                 className="mt-1 p-2 w-full border border-gray-300 rounded"
                                 placeholder="confirm new password"
+                                value={confirmNewPassword}
+                                onChange={(e) => setConfirmNewPassword(e.target.value)}
                             />
                         </div>
 
