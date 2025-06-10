@@ -2,8 +2,10 @@ import { React, useEffect, useRef, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePages() {
+    const navigate = useNavigate();
     const buildKeyframes = (from, steps) => {
         const keys = new Set([
             ...Object.keys(from),
@@ -147,18 +149,18 @@ export default function HomePages() {
                             onAnimationComplete={() => console.log('Animation Complete')}
                         />
                     </div>
-                    <div className="mt-10">
-                        <a
-                            href="/question"
-                            className="bg-red-600 text-white py-3 px-6 rounded-full text-lg hover:bg-red-400"
-                        >
-                            Get Started
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <Footer />
-        </main>
-    );
+                    <button
+                        onClick={() => {
+                            const token = localStorage.getItem('token');
+                            token ? navigate('/question') : navigate('/login');
+                        }}
+                    className="bg-red-600 text-white py-3 px-6 rounded-full text-lg hover:bg-red-400 transition-colors duration-300 mt-8"
+                >
+                Get Started
+            </button>
+        </div>
+    </section>
+    <Footer />
+</main>
+);
 }

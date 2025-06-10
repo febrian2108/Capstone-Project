@@ -28,7 +28,7 @@ export default function LoginPages() {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/login", {
+            const response = await fetch("http://localhost:9000/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function LoginPages() {
                     password: "",
                 });
 
-                navigate("/genres");
+                navigate("/");
             }
         } catch (error) {
             console.error("Login error:", error);

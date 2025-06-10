@@ -10,6 +10,8 @@ export default function RegisterPages() {
         email: "",
         password: "",
         confirmPassword: "",
+        country: "",
+        age: "",
     });
 
     const [error, setError] = useState("");
@@ -30,13 +32,13 @@ export default function RegisterPages() {
             return;
         }
 
-        if (formData.username === "" || formData.email === "" || formData.password === "") {
+        if (formData.username === "" || formData.email === "" || formData.password === "" || formData.confirmPassword === "" || formData.country === "" || formData.age === "") {
             setError("Semua kolom harus diisi.");
             return;
         }
 
         try {
-            const response = await fetch("http://localhost:3000/register", {
+            const response = await fetch("http://localhost:9000/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -55,6 +57,8 @@ export default function RegisterPages() {
                     email: "",
                     password: "",
                     confirmPassword: "",
+                    country: "",
+                    age: "",
                 });
 
                 // Redirect ke halaman login setelah berhasil
@@ -127,6 +131,32 @@ export default function RegisterPages() {
                                     placeholder="Confirm Password"
                                     minLength={6}
                                     value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mt-3">
+                                 <input
+                                    type="text"
+                                    name="country"
+                                    id="country"
+                                    placeholder="Enter Your Country"
+                                    value={formData.country}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mt-3">
+                                <input
+                                    type="text"
+                                    name="age"
+                                    id="age"
+                                    placeholder="Enter Your Age"
+                                    value={formData.age}
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-red-500 focus:bg-white focus:outline-none"
                                     required

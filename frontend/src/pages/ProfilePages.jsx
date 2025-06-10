@@ -9,6 +9,48 @@ export default function ProfilePages() {
     const [email, setEmail] = useState("");
     const [age, setAge] = useState("");
     const [country, setCountry] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setSuccessMessage("");
+        setErrorMessage("");
+
+        // Simulasi pengiriman data ke server
+       try {
+            const response = await fetch("http://localhost:9000/profile/edit", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    username,
+                    email,
+                    age,
+                    country,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to update profile");
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Update failed");
+            }
+            setSuccessMessage(data.message || "Profile updated successfully!");
+        } catch (error) {
+            setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div>
@@ -32,7 +74,12 @@ export default function ProfilePages() {
 
                     <h2 className="text-2xl font-semibold mb-6">Details Profile</h2>
 
-                    <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
+                    {errorMessage && <p className="text-red-600 mb-4">{errorMessage}</p>}
+
+
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-gray-700">Username</label>
                             <input
@@ -276,6 +323,7 @@ export default function ProfilePages() {
                         <div className="col-span-1 md:col-span-2 flex justify-between mt-4">
                             <button type="submit" className="bg-blue-600 text-white py-2 px-6 rounded">
                                 <span className="material-icons">Save</span>
+                                {loading ? "Updating..." : "Update Profile"}
                             </button>
                             <button type="button" className="bg-gray-300 text-gray-700 py-2 px-6 rounded">
                                 <span className="material-icons">Cancel</span>
