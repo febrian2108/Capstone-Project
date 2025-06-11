@@ -12,6 +12,7 @@
   "dependencies": {
     "@hapi/hapi": "^21.4.0",
     "@tanstack/react-query": "^5.79.0",
+    "axios": "^1.9.0",
     "font-awesome": "^4.7.0",
     "framer-motion": "^12.16.0",
     "react": "^19.1.0",
