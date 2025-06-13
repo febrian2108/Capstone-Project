@@ -2,8 +2,6 @@
 
 ## Installation
 
-Install Dicoding-Ai
-
 1. Clone the repo
    ```sh
    git clone https://github.com/febrian2108/Capstone-Project.git
