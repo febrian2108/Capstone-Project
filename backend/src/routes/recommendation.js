@@ -1,5 +1,5 @@
 const { recommendFilms } = require('../handlers/recommendationHandler.js');
-const authenticate = require('../utils/authenticate.js'); 
+const authenticate = require('../utils/authenticate.js'); // tanpa destructuring {}
 
 const recommendationRoutes = [
   {
@@ -10,6 +10,7 @@ const recommendationRoutes = [
       pre: [{ method: authenticate }],
     },
   }
+   
 ];
 
 module.exports = recommendationRoutes;

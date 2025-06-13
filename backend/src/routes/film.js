@@ -1,20 +1,16 @@
-const { getFilmsByGenre, getFilteredFilmsHandler } = require('../handlers/filmhandler');
+const { getFilteredFilmsHandler } = require('../handlers/filmHandler');
 const authenticate = require('../utils/authenticate');
 
 const filmRoutes = [
   {
-    method: 'GET',
-    path: '/films/{genre}',
-    handler: getFilmsByGenre,
+  method: 'POST',
+  path: '/films/filter',
+  handler: getFilteredFilmsHandler,
+  options: {
+    pre: [{ method: authenticate }],
   },
-  {
-    method: 'POST',
-    path: '/films',
-    handler: getFilteredFilmsHandler,
-    options: {
-      pre: [{ method: authenticate }],
-    },
-  },
+}
+
 ];
 
 module.exports = filmRoutes;
