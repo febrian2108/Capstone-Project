@@ -15,9 +15,9 @@ export default function OutputPages() {
     const fetchRecs = async () => {
       try {
         const payload = {
-          watched: answers[3] || [],
-          genres: answers[1] || [],
-          contentTypes: answers[2] || [],
+          watched: answers.films || [],
+          genres: answers.genres || [],
+          contentTypes: answers.mediaTypes || [],
         };
 
         const { data } = await axios.post(
@@ -31,10 +31,12 @@ export default function OutputPages() {
           }
         );
 
-        const formatted = data.recommendations.map(r => ({
-          title: r.title,
-          note: `Similarity ${(r.similarity * 100).toFixed(0)}%`,
-          poster: 'https://upload.wikimedia.org/wikipedia/id/2/20/Poster_Spider-Man_No_Way_Home.jpg',
+        const filtered = data.recommendations.filter(
+          (rec) => !(answers.films || []).includes(rec.title)
+        );
+
+        const formatted = filtered.map((rec) => ({
+          title: rec.title,
         }));
 
         setRecs(formatted);
@@ -49,14 +51,20 @@ export default function OutputPages() {
   }, [answers]);
 
   if (loading) {
-    return <div className="text-white text-center mt-20">Memuat rekomendasi…</div>;
+    return (
+      <div className="text-white text-center mt-20">Memuat rekomendasi…</div>
+    );
   }
 
   return (
     <main className="relative min-h-screen flex flex-col text-white">
       <Navbar />
       <div className="fixed inset-0 -z-10">
-        <img src="/src/assets/background-netflix.jpg" alt="" className="w-full h-full object-cover" />
+        <img
+          src="/src/assets/background-netflix.jpg"
+          alt="background"
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-8 mb-32">
@@ -68,10 +76,8 @@ export default function OutputPages() {
           <div className="space-y-4">
             {recs.map((movie, i) => (
               <div key={i} className="flex items-center bg-gray-100 rounded p-4">
-                <img src={movie.poster} alt={movie.title} className="w-24 h-36 object-cover rounded" />
                 <div className="ml-4 text-black">
                   <h3 className="font-semibold text-lg">{movie.title}</h3>
-                  <p className="text-sm">{movie.note}</p>
                 </div>
               </div>
             ))}

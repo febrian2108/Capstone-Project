@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import backgroundImg from "../assets/panggung.jpg";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 
 export default function ProfilePages() {
     const [username, setUsername] = useState("");
@@ -12,6 +12,30 @@ export default function ProfilePages() {
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await fetch("http://localhost:9000/profile", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                });
+
+                if (!response.ok) throw new Error("Gagal mengambil data profil");
+
+                const data = await response.json();
+                setUsername(data.username);
+                setEmail(data.email);
+                setAge(data.age);
+                setCountry(data.country);
+            } catch (err) {
+                setErrorMessage(err.message);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

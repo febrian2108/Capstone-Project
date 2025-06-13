@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -23,21 +22,17 @@ export default function QuestionPages() {
 
         const qList = [
           {
-            id: 1,
-            key: "genres",
+            id: "genres",
             question: "Genre seperti apa yang kamu sukai?",
             options: genresRes.data,
           },
           {
-            id: 2,
-            key: "mediaTypes",
+            id: "mediaTypes",
             question: "Content type atau media type mana yang lebih kamu suka?",
             options: mediaTypesRes.data,
           },
-
           {
-            id: 3,
-            key: "films",
+            id: "films",
             question: "Film seperti apa yang pernah kamu tonton?",
             options: [],
           },
@@ -56,41 +51,45 @@ export default function QuestionPages() {
   }, []);
 
   const handleCheckboxChange = (qId, value) => {
-    const prevAnswers = answers[qId] || [];
-    const updated = prevAnswers.includes(value)
-      ? prevAnswers.filter((v) => v !== value)
-      : [...prevAnswers, value];
+    const prev = answers[qId] || [];
+    const updated = prev.includes(value)
+      ? prev.filter((v) => v !== value)
+      : [...prev, value];
 
-    setAnswers({
-      ...answers,
-      [qId]: updated,
-    });
+    setAnswers({ ...answers, [qId]: updated });
   };
+
   const handleNext = async () => {
     const currentId = questions[currentQuestionIndex].id;
 
-    if (currentId === 2) {
-  try {
-    const payload = {
-      genres: answers[1] || [],
-      contentTypes: answers[2] || [],
-    };
-    const res = await axios.post("http://localhost:9000/films", payload, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    const filmOptions = res.data.data.map(f => f.title);
-    const updatedQuestions = [...questions];
-    updatedQuestions[2].options = filmOptions;  
-    setQuestions(updatedQuestions);
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Gagal memuat film sesuai pilihan kamu", "", "error");
-    return;
-  }
-}
+    if (currentId === "mediaTypes") {
+      try {
+        const payload = {
+          genres: answers.genres || [],
+          contentTypes: answers.mediaTypes || [],
+        };
+
+        const res = await axios.post(
+          "http://localhost:9000/films/filter",
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const filmOptions = res.data.data.map((film) => film.title);
+        const updatedQuestions = [...questions];
+        updatedQuestions.find((q) => q.id === "films").options = filmOptions;
+        setQuestions(updatedQuestions);
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Gagal memuat film sesuai pilihan kamu", "", "error");
+        return;
+      }
+    }
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -107,7 +106,7 @@ export default function QuestionPages() {
     }
   };
 
-  if (loading) {
+  if (loading || !questions[currentQuestionIndex]) {
     return <div className="text-white text-center mt-20">Memuat pertanyaan...</div>;
   }
 
@@ -116,7 +115,6 @@ export default function QuestionPages() {
 
   return (
     <main className="relative min-h-screen flex flex-col text-white">
-      {/* Background image */}
       <div className="fixed inset-0 -z-10">
         <img
           src="./src/assets/background-netflix.jpg"

@@ -17,7 +17,7 @@ const router = createBrowserRouter([
   { path: "/register", element: <RegisterPages /> },
   { path: "/about", element: <AboutApps /> },
   {
-    path: "/",                
+    path: "/",                // route wrapper untuk protected routes
     element: <PrivateRoute />,
     children: [
       { path: "question", element: <QuestionPages /> },
