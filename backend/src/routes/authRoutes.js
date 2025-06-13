@@ -1,4 +1,4 @@
-const { registerHandler, loginHandler, editingProfileHandler, changePasswordHandler } = require('../handlers/authHandler');
+const { registerHandler, loginHandler, getProfileHandler, editingProfileHandler, changePasswordHandler } = require('../handlers/authHandler');
 const authenticate = require('../utils/authenticate');
 
 module.exports = [
@@ -16,20 +16,15 @@ module.exports = [
         method: 'GET',
         path: '/profile',
         options: {
-            pre: [{ method: authenticate }],
+            pre: [{ method: authenticate, assign: 'auth' }],
         },
-        handler: (request) => {
-            return {
-                message: 'User profile data',
-                user: request.auth.credentials,
-            };
-        },
+        handler: getProfileHandler,
     },
     {
         method: 'PUT',
         path: '/profile/edit',
         options: {
-            pre: [{ method: authenticate }],
+            pre: [{ method: authenticate, assign: 'auth' }],
         },
         handler: editingProfileHandler,
     },
@@ -37,7 +32,7 @@ module.exports = [
         method: 'PUT',
         path: '/profile/change-password',
         options: {
-            pre: [{ method: authenticate }],
+            pre: [{ method: authenticate, assign: 'auth' }],
         },
         handler: changePasswordHandler,
     },

@@ -1,52 +1,37 @@
-const { films } = require('../utils/dummydata');
+const axios = require('axios');
 
 const recommendFilms = async (request, h) => {
-  const {
-    watched = [],
-    genres = [],
-    contentTypes = [],
-  } = request.payload;
+  const { watched = [] } = request.payload;
 
-  const allUnwatched = films.filter(f => !watched.includes(f.title));
+  try {
+    const response = await axios.post(`${process.env.ML_BASE_URL}/predict`, {
+      titles: watched,
+    });
 
-  const mockMLResponse = allUnwatched.map(f => ({
-    title: f.title,
-    similarity: Number((Math.random() * 0.2 + 0.8).toFixed(2)), 
-  }));
+    const recommendationsRaw = response.data[0]?.recommendations || [];
 
-  const gFilters = genres.map(g => g.toLowerCase());
-  const tFilters = contentTypes.map(t => t.toLowerCase());
+    const recommendations = recommendationsRaw.filter((rec) => {
+      const title = rec.title?.trim().toLowerCase();
+      return !watched.some(
+        (watchedTitle) =>
+          watchedTitle.trim().toLowerCase() === title
+      );
+    });
 
-  const recommendations = mockMLResponse
-    .map(({ title, similarity }) => {
-      const film = films.find(f => f.title === title);
-      if (!film) return null;
 
-      const matchesGenre =
-        gFilters.length === 0 ||
-        film.genres.some(g => gFilters.includes(g.toLowerCase()));
-      const matchesType =
-        tFilters.length === 0 ||
-        tFilters.includes(film.mediaType.toLowerCase());
+    return h.response({
+      message: 'Rekomendasi dari model ML berhasil',
+      watched,
+      recommendations,
+    }).code(200);
 
-      return matchesGenre && matchesType
-        ? {
-            title,
-            similarity,
-            genres: film.genres,
-            mediaType: film.mediaType,
-          }
-        : null;
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, 10);
-
-  return h.response({
-    message: 'Rekomendasi dummy berdasarkan model ML',
-    watched,
-    recommendations,
-  }).code(200);
+  } catch (error) {
+    console.error(error);
+    return h.response({
+      message: 'Gagal mengambil rekomendasi dari model ML',
+      error: error.message,
+    }).code(500);
+  }
 };
 
 module.exports = { recommendFilms };

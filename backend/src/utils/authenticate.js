@@ -28,11 +28,8 @@ const authenticate = async (request, h) => {
         .takeover();
     }
 
-    // Set credentials tanpa overwrite request.auth
-    request.auth = request.auth || {};
-    request.auth.credentials = decoded;
+    return decoded;
 
-    return h.continue;
   } catch {
     return h
       .response({ error: 'Invalid token' })

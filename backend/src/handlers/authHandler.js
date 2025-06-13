@@ -74,8 +74,27 @@ const loginHandler = async (request, h) => {
     });
 };
 
+const getProfileHandler = async (request, h) => {
+    const { id } = request.pre.auth;
+    const user = users.find(user => user.id === id);
+
+    if (!user) {
+        return h.response({ error: 'User not found' }).code(404);
+    }
+
+    return {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        age: user.age,
+        country: user.country,
+    };
+};
+
+
+
 const editingProfileHandler = async (request, h) => {
-    const { id } = request.auth.credentials;
+   const { id } = request.pre.auth;
     const { username, email, country, age } = request.payload;
 
     const user = users.find(user => user.id === id);
@@ -102,7 +121,7 @@ const editingProfileHandler = async (request, h) => {
 
 const changePasswordHandler = async (request, h) => {
     const { currentPassword, newPassword, confirmNewPassword } = request.payload;
-    const { id } = request.auth.credentials;
+    const { id } = request.pre.auth;
 
     const user = users.find(u => u.id === id);
     if (!user) {
@@ -132,6 +151,7 @@ const changePasswordHandler = async (request, h) => {
 module.exports = {
     registerHandler,
     loginHandler,
+    getProfileHandler,
     editingProfileHandler,
     changePasswordHandler,
 };
