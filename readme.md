@@ -28,7 +28,7 @@ Install Capstone Project
 5. Run Machine Learning
    ```sh
    cd ml-model
-   python train_model.py
+   Sistem_Rekomendasi_Film_Acara_TV_Berbasis_Konten.ipynb
    ```
 6. Go to website
    ```sh
